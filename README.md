@@ -23,6 +23,8 @@ gem "lita-zendesk"
 
 ## Configuration
 
+Both Token and Password authentication are supported using the `config.handlers.zendesk.auth_type` property which can be set to `token` or `password`.
+
 ``` ruby
 Lita.configure do |config|
 
