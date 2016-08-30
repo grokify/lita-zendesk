@@ -3,7 +3,7 @@ Gem::Specification.new do |spec|
   spec.date          = '2016-08-31'
   spec.version       = '0.0.4'
   spec.authors       = ['John Wang']
-  spec.email         = ["johncwang@gmail.com"]
+  spec.email         = ['johncwang@gmail.com']
   spec.description   = %q{A Zendesk handler for Lita.}
   spec.summary       = %q{A Zendesk handler for the Lita chatbot.}
   spec.homepage      = 'https://github.com/grokify/lita-zendesk'

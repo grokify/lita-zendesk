@@ -44,6 +44,7 @@ end
 
 ```
 Lita > @lita help
+Lita: zd connection - returns information on the Zendesk connection
 Lita: zd tickets - returns the total count of all unsolved tickets
 Lita: zd all tickets - returns the count of all tickets
 Lita: zd pending tickets - returns a count of tickets that are pending
