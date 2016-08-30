@@ -58,7 +58,7 @@ Lita: zd list pending tickets - returns a list of pending tickets
 Lita: zd list new tickets - returns a list of new tickets
 Lita: zd list esclated tickets - returns a list of escalated tickets
 Lita: zd list open tickets - returns a list of open tickets
-Lita: zd list onhold tickets - returns a list of on hold tickets
+Lita: zd list on hold tickets - returns a list of on hold tickets
 Lita: zd ticket <ID> - returns information about the specified ticket
 ```
 
