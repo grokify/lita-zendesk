@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   spec.name          = 'lita-zendesk'
   spec.date          = '2016-08-30'
-  spec.version       = '0.0.1'
+  spec.version       = '0.0.3'
   spec.authors       = ['John Wang']
   spec.email         = ["johncwang@gmail.com"]
   spec.description   = %q{A Zendesk handler for Lita.}
@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
   spec.metadata      = { 'lita_plugin_type' => 'handler' }
 
   spec.files         = Dir['lib/**/**/*']
+  spec.files        += Dir['[A-Z]*'] + Dir['spec/**/*']
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
