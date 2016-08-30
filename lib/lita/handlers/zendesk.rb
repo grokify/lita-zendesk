@@ -90,7 +90,7 @@ module Lita
 
       route(/^(?:zd|zendesk)\s+connection\s*$/, :zd_instance_info, command: true, help: { 'zd connection' => 'returns information on the Zendesk connection' })
       def zd_instance_info(response)
-        response.reply "Connected to Zendesk instance at: " + base_url
+        response.reply "Using Zendesk instance at: #{base_url}"
       end
 
       # Ticket Counts
