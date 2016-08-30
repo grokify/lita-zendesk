@@ -1,7 +1,6 @@
 require 'base64'
 require 'faraday'
 require 'faraday_middleware'
-require 'pp'
 
 module Lita
   module Handlers
@@ -25,9 +24,9 @@ module Lita
       config :password, type: String, default: ''
 
       def init
-        @base_url = "https://#{config.subdomain.to_s}.zendesk.com"
-        @version_url = "https://#{config.subdomain.to_s}.zendesk.com/#{VERSION_URL}"
-        @tickets_url = "https://#{config.subdomain.to_s}.zendesk.com/tickets"
+        @base_url = base_url
+        @version_url = "#{@base_url}/#{VERSION_URL}"
+        @tickets_url = "#{@base_url}/tickets"
 
         if config.auth_type == 'password'
           @conn = Faraday.new(url: @version_url) do |faraday|
@@ -46,12 +45,16 @@ module Lita
         end
       end
 
+      def base_url
+        "https://#{config.subdomain.to_s}.zendesk.com"
+      end
+
       def basic_credentials
         Base64.encode64("#{config.user}:#{config.password}").gsub(/\s/,'')
       end
 
       def zendesk_request(url)
-      	init unless @conn
+        init unless @conn
         if url.index('http') != 0
           url = "#{@version_url}/#{url}"
         end
@@ -67,7 +70,7 @@ module Lita
       end
 
       def ticket_list(response, url, ticket_type = '')
-      	res = zendesk_request url
+        res = zendesk_request url
         tickets = res.body['results']
         tickets.each do |ticket|
           response.reply "Ticket #{ticket['id']} is #{ticket['status']}: #{@tickets_url}/#{ticket['id']} - #{ticket['subject']}"
@@ -81,6 +84,13 @@ module Lita
 
       def tickets(count)
         count == 1 ? 'ticket' : 'tickets'
+      end
+
+      # Info
+
+      route(/^(?:zd|zendesk)\s+connection\s*$/, :zd_instance_info, command: true, help: { 'zd connection' => 'returns information on the Zendesk connection' })
+      def zd_instance_info(response)
+        response.reply "Connected to Zendesk instance at: " + base_url
       end
 
       # Ticket Counts
@@ -124,7 +134,7 @@ module Lita
 
       route(/^(?:zd|zendesk)\s+list(\s+unsolved)?\s+tickets?\s*$/, :unsolved_tickets_list, command: true, help: { 'zd list tickets' => 'returns a list of unsolved tickets' })
       def unsolved_tickets_list(response)
-      	ticket_list response, QUERY_TICKETS_UNSOLVED, 'unsolved'
+        ticket_list response, QUERY_TICKETS_UNSOLVED, 'unsolved'
       end
 
       route(/^(?:zd|zendesk)\s+list\s+(all|total)\s+tickets?\s*$/, :total_tickets_list, command: true, help: { 'zd list all tickets' => 'returns a list of all tickets' })
@@ -161,18 +171,18 @@ module Lita
 
       route(/^(?:zd|zendesk)\s+ticket\s+(\d+)\s*$/, :ticket_details, command: true, help: { 'zd ticket <ID>' => 'returns information about the specified ticket' })
       def ticket_details(response)
-      	ticket_id = response.matches[0][0]
-      	url = "#{QUERY_TICKETS_ALL}/#{ticket_id}.json"
-      	res = zendesk_request url
-      	data = res.body
+        ticket_id = response.matches[0][0]
+        url = "#{QUERY_TICKETS_ALL}/#{ticket_id}.json"
+        res = zendesk_request url
+        data = res.body
 
-      	message = "Ticket #{data['ticket']['id']}: #{@tickets_url}/#{data['ticket']['id']}"
-      	message += "\nStatus: #{data['ticket']['status'].upcase}"
-      	message += "\nUpdated: " + data['ticket']['updated_at']
-      	message += "\nAdded: #{data['ticket']['created_at']}"
-      	message += "\nSubject: #{data['ticket']['subject']}"
-      	message += "\nDescription:\n-----\n#{data['ticket']['description']}\n-----\n"
-      	response.reply message
+        message = "Ticket #{data['ticket']['id']}: #{@tickets_url}/#{data['ticket']['id']}"
+        message += "\nStatus: #{data['ticket']['status'].upcase}"
+        message += "\nUpdated: " + data['ticket']['updated_at']
+        message += "\nAdded: #{data['ticket']['created_at']}"
+        message += "\nSubject: #{data['ticket']['subject']}"
+        message += "\nDescription:\n-----\n#{data['ticket']['description']}\n-----\n"
+        response.reply message
       end
     end
 
