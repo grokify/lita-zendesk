@@ -59,14 +59,6 @@ Lita: zd list onhold tickets - returns a list of on hold tickets
 Lita: zd ticket <ID> - returns information about the specified ticket
 ```
 
-## API documentation
-
-The API documentation, useful for plugin authors, can be found for the latest gem release on [RubyDoc.info](http://www.rubydoc.info/gems/lita-zendesk).
-
-## To Do
-
-1. User address book lookup.
-
 ## Change Log
 
 See [CHANGELOG.md](CHANGELOG.md)
