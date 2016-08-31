@@ -64,7 +64,7 @@ module Lita
         @conn.get url
       end
 
-      # Info
+      # General
 
       route(/^(?:zd|zendesk)\s+connection\s*$/, :zd_instance_info, command: true, help: { 'zd connection' => 'returns information on the Zendesk connection' })
       def zd_instance_info(response)
