@@ -77,7 +77,7 @@ Lita
 
 * https://www.lita.io/
 
-Ported and adapted from `hubot-scripts/zendesk.coffee`:
+Ported and enhanced from `hubot-scripts/zendesk.coffee`:
 
 * https://github.com/github/hubot-scripts/blob/master/src/scripts/zendesk.coffee
 
