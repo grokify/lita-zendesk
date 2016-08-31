@@ -9,7 +9,7 @@ module Lita
 
       VERSION_URL = 'api/v2'
       QUERY_SEARCH_PREFIX = 'search.json?query='
-      QUERY_SEARCH_TICKET = 'type:ticket'
+      QUERY_TICKETS_SEARCH = 'search.json?query=type:ticket '
       QUERY_TICKETS_ALL = 'tickets'
       QUERY_TICKETS_ESCALATED = 'search.json?query=tags:escalated+status:open+status:pending+type:ticket'
       QUERY_TICKETS_HOLD = 'search.json?query=status:hold+type:ticket'
@@ -73,7 +73,7 @@ module Lita
 
       route(/^(?:zd|zendesk)\s+search\s+tickets?\s+(\S.*?)\s*$/, :search_tickets, command: true, help: { 'zd search tickets <QUERY>' => 'returns search results' })
       def search_tickets(response)
-        ticket_search response, QUERY_SEARCH_PREFIX, response.matches[0][0]
+        ticket_search response, QUERY_TICKETS_SEARCH, response.matches[0][0]
       end
 
       # Ticket Counts
@@ -171,7 +171,7 @@ module Lita
       private
 
       def ticket_search(response, url, query)
-        url += query + '+' + QUERY_SEARCH_TICKET
+        url += query
         res = zendesk_request url
         tickets = res.body['results']
         tickets.each do |ticket|

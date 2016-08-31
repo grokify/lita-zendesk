@@ -77,6 +77,10 @@ Lita
 
 * https://www.lita.io/
 
+Zendesk Search API
+
+* https://developer.zendesk.com/rest_api/docs/core/search
+
 Ported and enhanced from `hubot-scripts/zendesk.coffee`:
 
 * https://github.com/github/hubot-scripts/blob/master/src/scripts/zendesk.coffee
