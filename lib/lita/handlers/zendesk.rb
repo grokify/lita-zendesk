@@ -8,6 +8,8 @@ module Lita
       is_command = false
 
       VERSION_URL = 'api/v2'
+      QUERY_SEARCH_PREFIX = 'search.json?query='
+      QUERY_SEARCH_TICKET = 'type:ticket'
       QUERY_TICKETS_ALL = 'tickets'
       QUERY_TICKETS_ESCALATED = 'search.json?query=tags:escalated+status:open+status:pending+type:ticket'
       QUERY_TICKETS_HOLD = 'search.json?query=status:hold+type:ticket'
@@ -23,7 +25,8 @@ module Lita
       config :token, type: String, default: ''
       config :password, type: String, default: ''
 
-      def init
+      def check_client(reload = false)
+        return if @conn && !reload
         @base_url = base_url
         @version_url = "#{@base_url}/#{VERSION_URL}"
         @tickets_url = "#{@base_url}/tickets"
@@ -54,36 +57,11 @@ module Lita
       end
 
       def zendesk_request(url)
-        init unless @conn
+        check_client
         if url.index('http') != 0
           url = "#{@version_url}/#{url}"
         end
         @conn.get url
-      end
-
-      def ticket_count(response, url, ticket_type = '')
-        res = zendesk_request url
-        ticket_count = res.body['count']
-        ticket_word  = ticket_count == 1 ? 'ticket' : 'tickets'
-        ticket_desc  = ticket_type == '' ? '' : "#{ticket_type} "
-        response.reply "#{ticket_count} #{ticket_desc}#{ticket_word}."
-      end
-
-      def ticket_list(response, url, ticket_type = '')
-        res = zendesk_request url
-        tickets = res.body['results']
-        tickets.each do |ticket|
-          response.reply "Ticket #{ticket['id']} is #{ticket['status']}: #{@tickets_url}/#{ticket['id']} - #{ticket['subject']}"
-        end
-        ticket_length = tickets.length
-        ticket_count = res.body['count']
-        ticket_word  = ticket_count == 1 ? 'ticket' : 'tickets'
-        ticket_desc  = ticket_type == '' ? '' : "#{ticket_type} "
-        response.reply "Listing #{ticket_length} of #{ticket_count} #{ticket_desc}#{ticket_word}."
-      end
-
-      def tickets(count)
-        count == 1 ? 'ticket' : 'tickets'
       end
 
       # Info
@@ -91,6 +69,11 @@ module Lita
       route(/^(?:zd|zendesk)\s+connection\s*$/, :zd_instance_info, command: true, help: { 'zd connection' => 'returns information on the Zendesk connection' })
       def zd_instance_info(response)
         response.reply "Using Zendesk instance at: #{base_url}"
+      end
+
+      route(/^(?:zd|zendesk)\s+search\s+tickets?\s+(\S.*?)\s*$/, :search_tickets, command: true, help: { 'zd search tickets <QUERY>' => 'returns search results' })
+      def search_tickets(response)
+        ticket_search response, QUERY_SEARCH_PREFIX, response.matches[0][0]
       end
 
       # Ticket Counts
@@ -184,6 +167,47 @@ module Lita
         message += "\nDescription:\n-----\n#{data['ticket']['description']}\n-----\n"
         response.reply message
       end
+
+      private
+
+      def ticket_search(response, url, query)
+        url += query + '+' + QUERY_SEARCH_TICKET
+        res = zendesk_request url
+        tickets = res.body['results']
+        tickets.each do |ticket|
+          response.reply "Ticket #{ticket['id']} is #{ticket['status']}: #{@tickets_url}/#{ticket['id']} - #{ticket['subject']}"
+        end
+        ticket_length = tickets.length
+        ticket_count = res.body['count']
+        ticket_word  = ticket_count == 1 ? 'result' : 'results'
+        response.reply "Listing #{ticket_length} of #{ticket_count} matching #{ticket_word}."
+      end
+
+      def ticket_count(response, url, ticket_type = '')
+        res = zendesk_request url
+        ticket_count = res.body['count']
+        ticket_word  = ticket_count == 1 ? 'ticket' : 'tickets'
+        ticket_desc  = ticket_type == '' ? '' : "#{ticket_type} "
+        response.reply "#{ticket_count} #{ticket_desc}#{ticket_word}."
+      end
+
+      def ticket_list(response, url, ticket_type = '')
+        res = zendesk_request url
+        tickets = res.body['results']
+        tickets.each do |ticket|
+          response.reply "Ticket #{ticket['id']} is #{ticket['status']}: #{@tickets_url}/#{ticket['id']} - #{ticket['subject']}"
+        end
+        ticket_length = tickets.length
+        ticket_count = res.body['count']
+        ticket_word  = ticket_count == 1 ? 'ticket' : 'tickets'
+        ticket_desc  = ticket_type == '' ? '' : "#{ticket_type} "
+        response.reply "Listing #{ticket_length} of #{ticket_count} #{ticket_desc}#{ticket_word}."
+      end
+
+      def tickets(count)
+        count == 1 ? 'ticket' : 'tickets'
+      end
+
     end
 
     Lita.register_handler(Zendesk)

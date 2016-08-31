@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   spec.name          = 'lita-zendesk'
   spec.date          = '2016-08-31'
-  spec.version       = '0.0.4'
+  spec.version       = '0.0.5'
   spec.authors       = ['John Wang']
   spec.email         = ['johncwang@gmail.com']
   spec.description   = %q{A Zendesk handler for Lita.}
