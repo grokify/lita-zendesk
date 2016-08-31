@@ -170,6 +170,14 @@ module Lita
 
       private
 
+      def ticket_count(response, url, ticket_type = '')
+        res = zendesk_request url
+        ticket_count = res.body['count']
+        ticket_word  = ticket_count == 1 ? 'ticket' : 'tickets'
+        ticket_desc  = ticket_type == '' ? '' : "#{ticket_type} "
+        response.reply "#{ticket_count} #{ticket_desc}#{ticket_word}."
+      end
+
       def ticket_search(response, url, query)
         url += query
         res = zendesk_request url
@@ -181,14 +189,6 @@ module Lita
         ticket_count = res.body['count']
         ticket_word  = ticket_count == 1 ? 'result' : 'results'
         response.reply "Listing #{ticket_length} of #{ticket_count} matching #{ticket_word}."
-      end
-
-      def ticket_count(response, url, ticket_type = '')
-        res = zendesk_request url
-        ticket_count = res.body['count']
-        ticket_word  = ticket_count == 1 ? 'ticket' : 'tickets'
-        ticket_desc  = ticket_type == '' ? '' : "#{ticket_type} "
-        response.reply "#{ticket_count} #{ticket_desc}#{ticket_word}."
       end
 
       def ticket_list(response, url, ticket_type = '')
@@ -207,7 +207,6 @@ module Lita
       def tickets(count)
         count == 1 ? 'ticket' : 'tickets'
       end
-
     end
 
     Lita.register_handler(Zendesk)
