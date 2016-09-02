@@ -5,7 +5,6 @@ require 'faraday_middleware'
 module Lita
   module Handlers
     class Zendesk < Handler
-      is_command = false
 
       VERSION_URL = 'api/v2'
       QUERY_SEARCH_PREFIX = 'search.json?query='
@@ -19,6 +18,7 @@ module Lita
       QUERY_TICKETS_UNSOLVED = 'search.json?query=status<solved+type:ticket'
       QUERY_USERS = 'users'
 
+      config :use_command, type: [true, false], default: true
       config :subdomain, type: String, required: true
       config :auth_type, type: String, default: 'password' # or token
       config :user, type: String, required: true
@@ -66,93 +66,93 @@ module Lita
 
       # General
 
-      route(/^(?:zd|zendesk)\s+connection\s*$/, :zd_instance_info, command: true, help: { 'zd connection' => 'returns information on the Zendesk connection' })
+      route(/^(?:zd|zendesk)\s+connection\s*$/, :zd_instance_info, command: config.use_command, help: { 'zd connection' => 'returns information on the Zendesk connection' })
       def zd_instance_info(response)
         response.reply "Using Zendesk instance at: #{base_url}"
       end
 
-      route(/^(?:zd|zendesk)\s+search\s+tickets?\s+(\S.*?)\s*$/, :search_tickets, command: true, help: { 'zd search tickets <QUERY>' => 'returns search results' })
+      route(/^(?:zd|zendesk)\s+search\s+tickets?\s+(\S.*?)\s*$/, :search_tickets, command: config.use_command, help: { 'zd search tickets <QUERY>' => 'returns search results' })
       def search_tickets(response)
         ticket_search response, QUERY_TICKETS_SEARCH, response.matches[0][0]
       end
 
       # Ticket Counts
 
-      route(/^(?:zd|zendesk)(\s+unsolved)?\s+tickets?\s*$/, :unsolved_tickets, command: true, help: { 'zd tickets' => 'returns the total count of all unsolved tickets' })
+      route(/^(?:zd|zendesk)(\s+unsolved)?\s+tickets?\s*$/, :unsolved_tickets, command: config.use_command, help: { 'zd tickets' => 'returns the total count of all unsolved tickets' })
       def unsolved_tickets(response)
         ticket_count response, QUERY_TICKETS_UNSOLVED, 'unsolved'
       end
 
-      route(/^(?:zd|zendesk)\s+(all|total)\s+tickets?\s*$/, :total_tickets, command: true, help: { 'zd all tickets' => 'returns the count of all tickets' })
+      route(/^(?:zd|zendesk)\s+(all|total)\s+tickets?\s*$/, :total_tickets, command: config.use_command, help: { 'zd all tickets' => 'returns the count of all tickets' })
       def total_tickets(response)
         ticket_count response, QUERY_TICKETS_ALL, 'total'
       end
 
-      route(/^(?:zd|zendesk)\s+pending\s+tickets?\s*$/, :pending_tickets, command: true, help: { 'zd pending tickets' => 'returns a count of tickets that are pending' })
+      route(/^(?:zd|zendesk)\s+pending\s+tickets?\s*$/, :pending_tickets, command: config.use_command, help: { 'zd pending tickets' => 'returns a count of tickets that are pending' })
       def pending_tickets(response)
         ticket_count response, QUERY_TICKETS_PENDING, 'pending'
       end
 
-      route(/^(?:zd|zendesk)\s+new\s+tickets?\s*$/, :new_tickets, command: true, help: { 'zd new tickets' => 'returns the count of all new (unassigned) tickets' })
+      route(/^(?:zd|zendesk)\s+new\s+tickets?\s*$/, :new_tickets, command: config.use_command, help: { 'zd new tickets' => 'returns the count of all new (unassigned) tickets' })
       def new_tickets(response)
         ticket_count response, QUERY_TICKETS_NEW, 'new'
       end
 
-      route(/^(?:zd|zendesk)\s+escalated\s+tickets?\s*$/, :escalated_tickets, command: true, help: { 'zd escalated tickets' => 'returns a count of tickets with escalated tag that are open or pending' })
+      route(/^(?:zd|zendesk)\s+escalated\s+tickets?\s*$/, :escalated_tickets, command: config.use_command, help: { 'zd escalated tickets' => 'returns a count of tickets with escalated tag that are open or pending' })
       def escalated_tickets(response)
         ticket_count response, QUERY_TICKETS_ESCALATED, 'escalated'
       end
 
-      route(/^(?:zd|zendesk)\s+open\s+tickets?\s*$/, :open_tickets, command: true, help: { 'zd open tickets' => 'returns the count of all open tickets' })
+      route(/^(?:zd|zendesk)\s+open\s+tickets?\s*$/, :open_tickets, command: config.use_command, help: { 'zd open tickets' => 'returns the count of all open tickets' })
       def open_tickets(response)
         ticket_count response, QUERY_TICKETS_OPEN, 'open'
       end
 
-      route(/^(?:zd|zendesk)\s+on\s+hold\s+tickets?\s*$/, :onhold_tickets, command: true, help: { 'zd on hold tickets' => 'returns the count of all on hold tickets' })
+      route(/^(?:zd|zendesk)\s+on\s+hold\s+tickets?\s*$/, :onhold_tickets, command: config.use_command, help: { 'zd on hold tickets' => 'returns the count of all on hold tickets' })
       def onhold_tickets(response)
         ticket_count response, QUERY_TICKETS_HOLD, 'on hold'
       end
 
       # Ticket Lists
 
-      route(/^(?:zd|zendesk)\s+list(\s+unsolved)?\s+tickets?\s*$/, :unsolved_tickets_list, command: true, help: { 'zd list tickets' => 'returns a list of unsolved tickets' })
+      route(/^(?:zd|zendesk)\s+list(\s+unsolved)?\s+tickets?\s*$/, :unsolved_tickets_list, command: config.use_command, help: { 'zd list tickets' => 'returns a list of unsolved tickets' })
       def unsolved_tickets_list(response)
         ticket_list response, QUERY_TICKETS_UNSOLVED, 'unsolved'
       end
 
-      route(/^(?:zd|zendesk)\s+list\s+(all|total)\s+tickets?\s*$/, :total_tickets_list, command: true, help: { 'zd list all tickets' => 'returns a list of all tickets' })
+      route(/^(?:zd|zendesk)\s+list\s+(all|total)\s+tickets?\s*$/, :total_tickets_list, command: config.use_command, help: { 'zd list all tickets' => 'returns a list of all tickets' })
       def total_tickets_list(response)
         ticket_list response, QUERY_TICKETS_ALL, 'total'
       end
 
-      route(/^(?:zd|zendesk)\s+list\s+pending\s+tickets?\s*$/, :pending_tickets_list, command: true, help: { 'zd list pending tickets' => 'returns a list of pending tickets' })
+      route(/^(?:zd|zendesk)\s+list\s+pending\s+tickets?\s*$/, :pending_tickets_list, command: config.use_command, help: { 'zd list pending tickets' => 'returns a list of pending tickets' })
       def pending_tickets_list(response)
         ticket_list response, QUERY_TICKETS_PENDING, 'pending'
       end
 
-      route(/^(?:zd|zendesk)\s+list\s+new\s+tickets?\s*$/, :new_tickets_list, command: true, help: { 'zd list new tickets' => 'returns a list of new tickets' })
+      route(/^(?:zd|zendesk)\s+list\s+new\s+tickets?\s*$/, :new_tickets_list, command: config.use_command, help: { 'zd list new tickets' => 'returns a list of new tickets' })
       def new_tickets_list(response)
         ticket_list response, QUERY_TICKETS_NEW, 'new'
       end
 
-      route(/^(?:zd|zendesk)\s+list\s+escalated\s+tickets?\s*$/, :escalated_tickets_list, command: true, help: { 'zd list esclated tickets' => 'returns a list of escalated tickets' })
+      route(/^(?:zd|zendesk)\s+list\s+escalated\s+tickets?\s*$/, :escalated_tickets_list, command: config.use_command, help: { 'zd list esclated tickets' => 'returns a list of escalated tickets' })
       def escalated_tickets_list(response)
         ticket_list response, QUERY_TICKETS_ESCALATED, 'escalated'
       end
 
-      route(/^(?:zd|zendesk)\s+list\s+open\s+tickets?\s*$/, :open_tickets_list, command: true, help: { 'zd list open tickets' => 'returns a list of open tickets' })
+      route(/^(?:zd|zendesk)\s+list\s+open\s+tickets?\s*$/, :open_tickets_list, command: config.use_command, help: { 'zd list open tickets' => 'returns a list of open tickets' })
       def open_tickets_list(response)
         ticket_list response, QUERY_TICKETS_OPEN, 'open'
       end
 
-      route(/^(?:zd|zendesk)\s+list\s+on\s+hold\s+tickets?\s*$/, :onhold_tickets_list, command: true, help: { 'zd list onhold tickets' => 'returns a list of on hold tickets' })
+      route(/^(?:zd|zendesk)\s+list\s+on\s+hold\s+tickets?\s*$/, :onhold_tickets_list, command: config.use_command, help: { 'zd list onhold tickets' => 'returns a list of on hold tickets' })
       def onhold_tickets_list(response)
         ticket_list response, QUERY_TICKETS_HOLD, 'on hold'
       end
 
       # Ticket Details
 
-      route(/^(?:zd|zendesk)\s+ticket\s+(\d+)\s*$/, :ticket_details, command: true, help: { 'zd ticket <ID>' => 'returns information about the specified ticket' })
+      route(/^(?:zd|zendesk)\s+ticket\s+(\d+)\s*$/, :ticket_details, command: config.use_command, help: { 'zd ticket <ID>' => 'returns information about the specified ticket' })
       def ticket_details(response)
         ticket_id = response.matches[0][0]
         url = "#{QUERY_TICKETS_ALL}/#{ticket_id}.json"

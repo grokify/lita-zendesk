@@ -35,6 +35,9 @@ Lita.configure do |config|
   config.handlers.zendesk.password = 'my_zendesk_password'
   config.handlers.zendesk.token = 'my_zendesk_token'
 
+  # Optional config
+  config.handlers.zendesk.use_command = false # defaults to true
+
 end
 ```
 
