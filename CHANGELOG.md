@@ -1,5 +1,8 @@
 CHANGELOG
 ---------
+- **0.0.6** - 2016-09-05
+  - Make routes case insensitive
+  - Add additional logging
 - **0.0.5** - 2016-08-31
   - Add free form ticket search
 - **0.0.2-0.0.4** - 2015-08-30 - 31
