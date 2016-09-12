@@ -11,7 +11,7 @@ Lita Zendesk Handler
 [![Docs][docs-rubydoc-svg]][docs-rubydoc-link]
 [![License][license-svg]][license-link]
 
-`lita-zendesk` is an handler for [Lita](https://www.lita.io/) that allows you to use the robot with [Zendesk](https://zendesk.com/) ticket queries.
+`lita-zendesk` is a handler for [Lita](https://www.lita.io/) that allows you to use the robot with [Zendesk](https://zendesk.com/) ticket queries.
 
 ## Installation
 
@@ -23,27 +23,23 @@ gem "lita-zendesk"
 
 ## Configuration
 
-Both Token and Password authentication are supported using the `config.handlers.zendesk.auth_type` property which can be set to `token` or `password`.
+Both Token and Password authentication are supported.
 
 ``` ruby
 Lita.configure do |config|
 
   # Zendesk user info
   config.handlers.zendesk.subdomain = 'my_zendesk_subdomain'
-  config.handlers.zendesk.auth_type = 'password'   # set to 'password' or 'token'
-  config.handlers.zendesk.user = 'my_zendesk_user' # required for both 'password' and 'token'
-  config.handlers.zendesk.password = 'my_zendesk_password'
-  config.handlers.zendesk.token = 'my_zendesk_token'
-
-  # Optional config
-  config.handlers.zendesk.use_command = false # defaults to true
+  config.handlers.zendesk.username = 'my_zendesk_username'
+  config.handlers.zendesk.token = 'my_zendesk_token'       # Use token or password
+  config.handlers.zendesk.password = 'my_zendesk_password' # Use token or password
 
 end
 ```
 
 ## Usage
 
-`zd` or `zendesk` both work for signaling the handler.
+`zd` or `zendesk` both work for triggering the handler.
 
 ```
 Lita > @lita help
@@ -62,7 +58,7 @@ Lita: zd list pending tickets - returns a list of pending tickets
 Lita: zd list new tickets - returns a list of new tickets
 Lita: zd list esclated tickets - returns a list of escalated tickets
 Lita: zd list open tickets - returns a list of open tickets
-Lita: zd list onhold tickets - returns a list of on hold tickets
+Lita: zd list on hold tickets - returns a list of on hold tickets
 Lita: zd ticket <ID> - returns information about the specified ticket
 ```
 

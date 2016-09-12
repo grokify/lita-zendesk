@@ -1,5 +1,12 @@
 CHANGELOG
 ---------
+- **0.1.0** - 2015-09-12
+  - Additions
+    - Add comments to ticket details
+    - Add ticket requester to ticket details
+    - Add use of official Zendesk SDK
+  - Breaking Changes
+    - Update config to match Zendesk SDK, `user` is now `username`
 - **0.0.6** - 2016-09-05
   - Make routes case insensitive
   - Add additional logging

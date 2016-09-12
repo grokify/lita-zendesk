@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   spec.name          = 'lita-zendesk'
-  spec.date          = '2016-09-05'
-  spec.version       = '0.0.6'
+  spec.date          = '2016-09-13'
+  spec.version       = '0.1.0'
   spec.authors       = ['John Wang']
   spec.email         = ['johncwang@gmail.com']
   spec.description   = %q{A Zendesk handler for Lita.}
@@ -15,9 +15,8 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'faraday', '~> 0.9', '>= 0.9'
-  spec.add_runtime_dependency 'faraday_middleware', '~> 0', '>= 0'
   spec.add_runtime_dependency 'lita', '>= 4.4.3'
+  spec.add_runtime_dependency 'zendesk_api', '>= 1.14.0', '~> 1.0'
 
   spec.add_development_dependency 'bundler', '~> 1.3'
   spec.add_development_dependency 'pry-byebug'
